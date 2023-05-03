@@ -1,10 +1,9 @@
 ___
 ## 🖥️ Timer Usage:
 ```rust
-use timer_module::timer::TimerModule;
-
 use std::thread::sleep;
 use std::time::Duration;
+use timer_module::timer::TimerModule;
 
 fn main() {
     let mut timer_module = TimerModule::new();
@@ -42,10 +41,9 @@ timer_module.reset();
 ___
 ## 🖥️ Profiler Usage:
 ```rust
-use timer_module::profiler::TimeProfiler;
-
 use std::thread::sleep;
 use std::time::Duration;
+use timer_module::profiler::TimeProfiler;
 
 fn main() {
     let mut profiler: TimeProfiler = TimeProfiler::new(false);
