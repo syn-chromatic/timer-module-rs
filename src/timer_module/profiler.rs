@@ -158,7 +158,7 @@ impl TimeProfiler {
         }
 
         let time_total: String = self.format_time(self.prof_timing_total);
-        println!("――― Total Time: [{}ms] ―――\n\n\n", time_total);
+        println!("――― Total Time: [{}] ―――\n\n\n", time_total);
     }
 
     fn set_pcall_object(&mut self, object_hash: u64) -> u64 {
