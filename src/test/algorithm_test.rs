@@ -20,12 +20,7 @@ pub fn generate_array(size: usize) -> Vec<i32> {
     output
 }
 
-fn binary_search_recursive(
-    array: &[i32],
-    value: i32,
-    mut low_idx: i32,
-    mut high_idx: i32,
-) -> i32 {
+fn binary_search_recursive(array: &[i32], value: i32, mut low_idx: i32, mut high_idx: i32) -> i32 {
     let mid_idx: i32 = (low_idx + high_idx) / 2;
 
     let l_value: i32 = array[low_idx as usize];

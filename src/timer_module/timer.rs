@@ -1,3 +1,7 @@
+use super::formatter::format_time;
+
+use core::fmt::Debug;
+use std::fmt::{Formatter, Result};
 use std::time::{Duration, Instant};
 
 pub struct TimerModule {
@@ -16,17 +20,13 @@ impl TimerModule {
     }
 
     pub fn start(&mut self) -> &mut Self {
-        if !self.is_running {
-            self.start_time = Instant::now() - self.duration;
-        }
+        self.update_start_time();
         self.is_running = true;
         self
     }
 
     pub fn pause(&mut self) -> &mut Self {
-        if self.is_running {
-            self.duration = Instant::now() - self.start_time;
-        }
+        self.update_duration();
         self.is_running = false;
         self
     }
@@ -51,16 +51,46 @@ impl TimerModule {
     }
 
     pub fn get_time(&mut self) -> f64 {
-        if self.is_running {
-            self.duration = Instant::now() - self.start_time;
-        }
+        self.update_duration();
         self.duration.as_secs_f64()
     }
 
     pub fn get_time_ms(&mut self) -> f64 {
+        self.update_duration();
+        self.duration.as_millis() as f64
+    }
+
+    pub fn get_string(&mut self) -> String {
+        self.update_duration();
+        let formatted_time: String = format_time(self.duration);
+        formatted_time
+    }
+
+    fn update_start_time(&mut self) {
+        if !self.is_running {
+            self.start_time = Instant::now() - self.duration;
+        }
+    }
+
+    fn update_duration(&mut self) {
         if self.is_running {
             self.duration = Instant::now() - self.start_time;
         }
-        self.duration.as_millis() as f64
+    }
+}
+
+fn get_duration(time_module: &TimerModule) -> Duration {
+    let mut duration: Duration = time_module.duration;
+    if time_module.is_running {
+        duration = Instant::now() - time_module.start_time;
+    }
+    duration
+}
+
+impl Debug for TimerModule {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        let duration: Duration = get_duration(self);
+        let formatted_time: String = format_time(duration);
+        write!(f, "{}", formatted_time)
     }
 }

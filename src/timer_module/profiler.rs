@@ -1,3 +1,5 @@
+use super::formatter::format_time;
+
 use std::any::TypeId;
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
@@ -84,16 +86,6 @@ impl TimeProfiler {
         hasher.finish()
     }
 
-    fn format_time(&self, time: Duration) -> String {
-        let ns: u128 = time.as_nanos();
-        if ns >= 1 * 1000000 {
-            let ms: f64 = ns as f64 / 1000000.0;
-            format!("{:.2}ms", ms)
-        } else {
-            format!("{:.2}ns", ns)
-        }
-    }
-
     fn print_pcall_header(&self, object_call: &ObjectCall) {
         let pcall_name: &String = &object_call.name;
         let profile_header: String = format!("█ PROFILE: {} █", pcall_name);
@@ -107,8 +99,8 @@ impl TimeProfiler {
         let pcall_ncalls: u32 = object_call.ncalls;
         let pcall_percall: Duration = pcall_time / pcall_ncalls;
 
-        let f_pcall_time: String = self.format_time(pcall_time);
-        let f_pcall_percall: String = self.format_time(pcall_percall);
+        let f_pcall_time: String = format_time(pcall_time);
+        let f_pcall_percall: String = format_time(pcall_percall);
 
         println!(
             "Profile Time: [{}]\nNCalls: [{}] — PerCall: [{}]\n——————\n",
@@ -123,8 +115,8 @@ impl TimeProfiler {
         let obj_ncalls: u32 = object_call.ncalls;
         let obj_percall: Duration = obj_time / obj_ncalls;
 
-        let f_obj_time: String = self.format_time(obj_time);
-        let f_obj_percall: String = self.format_time(obj_percall);
+        let f_obj_time: String = format_time(obj_time);
+        let f_obj_percall: String = format_time(obj_percall);
 
         let mut t_prc: f64 = 0.0;
 
@@ -157,7 +149,7 @@ impl TimeProfiler {
             self.print_pcall(pcall_object);
         }
 
-        let time_total: String = self.format_time(self.prof_timing_total);
+        let time_total: String = format_time(self.prof_timing_total);
         println!("――― Total Time: [{}] ―――\n\n\n", time_total);
     }
 
