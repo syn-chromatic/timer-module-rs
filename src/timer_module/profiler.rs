@@ -55,6 +55,8 @@ impl TimeProfiler {
         object_refs.get_mut(&object_hash).unwrap().time += time;
         object_refs.get_mut(&object_hash).unwrap().ncalls += 1;
 
+        drop(object_refs);
+
         if self.pcall_obj.is_some() {
             if object_hash == self.pcall_obj.unwrap() {
                 self.prof_timing_total += time;
