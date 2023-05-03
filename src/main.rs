@@ -19,7 +19,7 @@ fn main() {
 
 fn profile_function(profiler: &mut TimeProfiler) {
     let array: Vec<i32> = generate_array(10_000);
-    let mut function3 = profiler.function_wrapper(|(_, _)| binary_search_value);
+    let mut function3 = profiler.function_wrapper(|(a, b)| binary_search_value(a, b));
 
     for value in array.iter() {
         function3((&array, *value));
