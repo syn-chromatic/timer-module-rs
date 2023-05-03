@@ -1,4 +1,4 @@
-# timer-module-rust
+# timer-module-rs
 
 Attempting to translate my Python TimerModule to Rust
 
