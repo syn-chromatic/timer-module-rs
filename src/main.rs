@@ -6,7 +6,7 @@ use timer_module::profiler::TimeProfiler;
 
 fn main() {
     let mut profiler: TimeProfiler = TimeProfiler::new(false);
-    let array: Vec<i32> = generate_array(100_000);
+    let array: Vec<i32> = generate_array(10_000);
     println!("STARTING");
     {
         let mut function3 = profiler.function_wrapper(|(_, _)| binary_search_value);

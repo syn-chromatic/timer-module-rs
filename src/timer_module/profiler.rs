@@ -175,13 +175,16 @@ impl TimeProfiler {
         R: 'static,
     {
         let type_id: TypeId = TypeId::of::<F>();
-        let hash: u64 = self.hash_type_id(type_id);
+        let hash_ref: u64 = self.hash_type_id(type_id);
         let object_call: ObjectCall = self.create_object_call(&object);
 
-        if !self.object_refs.lock().unwrap().contains_key(&hash) {
-            self.object_refs.lock().unwrap().insert(hash, object_call);
+        if !self.object_refs.lock().unwrap().contains_key(&hash_ref) {
+            self.object_refs
+                .lock()
+                .unwrap()
+                .insert(hash_ref, object_call);
         }
-        hash
+        hash_ref
     }
 
     pub fn function_wrapper<F, A, R>(&mut self, function: F) -> impl FnMut(A) -> R + '_
@@ -193,11 +196,11 @@ impl TimeProfiler {
         let hash_ref: u64 = self.add_object_ref(&function);
 
         move |arg: A| {
-            let object_hash: u64 = self.set_pcall_object(hash_ref);
+            let hash_ref: u64 = self.set_pcall_object(hash_ref);
             let start_time: Instant = Instant::now();
             let result: R = function(arg);
             let elapsed_time: Duration = start_time.elapsed();
-            self.append_object_profiling(object_hash, elapsed_time);
+            self.append_object_profiling(hash_ref, elapsed_time);
             result
         }
     }
