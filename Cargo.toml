@@ -1,5 +1,5 @@
 [package]
-name = "timer-module-rust"
+name = "timer-module-rs"
 version = "0.1.0"
 edition = "2021"
 
