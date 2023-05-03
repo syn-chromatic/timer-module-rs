@@ -64,7 +64,7 @@ fn binary_search_recursive(
     return idx;
 }
 
-pub fn binary_search_value(array: &Vec<i32>, value: i32) -> i32 {
+pub fn binary_search_value(array: &[i32], value: i32) -> i32 {
     let low_idx: i32 = 0;
     let high_idx: i32 = (array.len() - 1) as i32;
     let idx: i32 = binary_search_recursive(&array, value, low_idx, high_idx);

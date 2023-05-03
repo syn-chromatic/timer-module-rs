@@ -78,29 +78,10 @@ impl TimeProfiler {
         object_call
     }
 
-    fn hash_object<F, A, R>(&self, _: &F) -> u64
-    where
-        F: Fn(A) -> R + 'static,
-        A: 'static + Copy,
-    {
-        let type_id: TypeId = TypeId::of::<F>();
+    fn hash_type_id(&self, type_id: TypeId) -> u64 {
         let mut hasher: DefaultHasher = DefaultHasher::new();
         type_id.hash(&mut hasher);
         hasher.finish()
-    }
-
-    fn add_object_ref<F, A, R>(&mut self, object: &F) -> u64
-    where
-        F: Fn(A) -> R + 'static,
-        A: 'static + Copy,
-    {
-        let hash: u64 = self.hash_object(object);
-        let object_call: ObjectCall = self.create_object_call(&object);
-
-        if !self.object_refs.lock().unwrap().contains_key(&hash) {
-            self.object_refs.lock().unwrap().insert(hash, object_call);
-        }
-        hash
     }
 
     fn format_time(&self, time: Duration) -> String {
@@ -177,16 +158,10 @@ impl TimeProfiler {
         }
 
         let time_total: String = self.format_time(self.prof_timing_total);
-        println!("――― Total Time: [{:.2}ms] ―――\n\n\n", time_total);
+        println!("――― Total Time: [{}ms] ―――\n\n\n", time_total);
     }
 
-    fn set_pcall_object<F, A, R>(&mut self, object: &F) -> u64
-    where
-        F: Fn(A) -> R + 'static,
-        A: 'static + Copy,
-    {
-        let object_hash: u64 = self.hash_object(object);
-
+    fn set_pcall_object(&mut self, object_hash: u64) -> u64 {
         if self.pcall_obj.is_none() {
             self.pcall_obj = Some(object_hash);
             self.prof_timing_refs.insert(object_hash, Vec::new());
@@ -201,15 +176,32 @@ impl TimeProfiler {
         object_hash
     }
 
+    fn add_object_ref<F, A, R>(&mut self, object: &F) -> u64
+    where
+        F: Fn(A) -> R + Send + Sync + 'static,
+        A: Send + Sync,
+        R: 'static,
+    {
+        let type_id: TypeId = TypeId::of::<F>();
+        let hash: u64 = self.hash_type_id(type_id);
+        let object_call: ObjectCall = self.create_object_call(&object);
+
+        if !self.object_refs.lock().unwrap().contains_key(&hash) {
+            self.object_refs.lock().unwrap().insert(hash, object_call);
+        }
+        hash
+    }
+
     pub fn function_wrapper<F, A, R>(&mut self, function: F) -> impl FnMut(A) -> R + '_
     where
-        F: Fn(A) -> R + 'static,
-        A: 'static + Copy,
+        F: Fn(A) -> R + Send + Sync + 'static,
+        A: Send + Sync,
+        R: 'static,
     {
-        self.add_object_ref(&function);
+        let hash_ref: u64 = self.add_object_ref(&function);
 
         move |arg: A| {
-            let object_hash: u64 = self.set_pcall_object(&function);
+            let object_hash: u64 = self.set_pcall_object(hash_ref);
             let start_time: Instant = Instant::now();
             let result: R = function(arg);
             let elapsed_time: Duration = start_time.elapsed();
