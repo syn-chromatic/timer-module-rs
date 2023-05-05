@@ -65,3 +65,65 @@ pub fn binary_search_value(array: &[i32], value: i32) -> i32 {
     let idx: i32 = binary_search_recursive(&array, value, low_idx, high_idx);
     idx
 }
+
+pub fn get_highest_bit(n: i32) -> i32 {
+    let mut bit: i32 = 1;
+    while bit * 2 <= n {
+        bit *= 2;
+    }
+    bit
+}
+
+pub fn get_bin(mut n: i32, length: usize) -> String {
+    let mut binary: String = "".to_string();
+    let mut bit: i32 = get_highest_bit(n);
+    while bit >= 1 {
+        if n - bit >= 0 {
+            binary += "1";
+            n -= bit;
+            bit /= 2;
+            continue;
+        }
+        binary += "0";
+        bit /= 2;
+    }
+    let final_binary: String = "0".repeat(length - binary.len()) + &binary;
+    final_binary
+}
+
+pub fn binary_digits(n: usize) -> Vec<String> {
+    let mut bins: Vec<String> = Vec::new();
+    bins.push("0".to_string());
+    let mut binary: i32 = 0;
+    let max_bin: String = "1".repeat(n);
+    let mut binary_string: String = get_bin(binary, n);
+    while binary_string != max_bin {
+        binary += 1;
+        binary_string = get_bin(binary, n);
+        bins.push(binary_string.clone());
+    }
+    return bins;
+}
+
+fn binary_recursion(binary: String, n: usize) -> Vec<String> {
+    if n == 0 {
+        return vec![binary];
+    }
+
+    let binary_input1: String = binary.clone() + "0";
+    let binary_input2: String = binary + "1";
+
+    let mut rec_binary1: Vec<String> = binary_recursion(binary_input1, n - 1);
+    let mut rec_binary2: Vec<String> = binary_recursion(binary_input2, n - 1);
+
+    rec_binary1.append(&mut rec_binary2);
+    rec_binary1
+}
+
+pub fn generate_binary_combinations(n: usize) -> Vec<String> {
+    if n == 0 {
+        return vec![];
+    }
+
+    binary_recursion("".to_string(), n)
+}
