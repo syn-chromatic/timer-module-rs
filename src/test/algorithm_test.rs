@@ -102,7 +102,7 @@ pub fn binary_digits(n: usize) -> Vec<String> {
         binary_string = get_bin(binary, n);
         bins.push(binary_string.clone());
     }
-    return bins;
+    bins
 }
 
 fn binary_recursion(binary: String, n: usize) -> Vec<String> {
