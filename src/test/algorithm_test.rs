@@ -127,3 +127,47 @@ pub fn generate_binary_combinations(n: usize) -> Vec<String> {
 
     binary_recursion("".to_string(), n)
 }
+
+pub fn recursive_permute2(nums: &mut Vec<i32>, result: &mut Vec<Vec<i32>>) {
+    if nums.len() == 1 {
+        result.push(nums.to_vec());
+        return;
+    }
+
+    for _ in 0..nums.len() {
+        let n = nums.remove(0);
+
+        let mut partial_result: Vec<Vec<i32>> = Vec::new();
+        recursive_permute2(nums, &mut partial_result);
+        for mut subset in partial_result {
+            subset.push(n);
+            result.push(subset);
+        }
+        nums.push(n);
+    }
+}
+
+pub fn permute(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+    let mut result = Vec::new();
+    recursive_permute2(&mut nums, &mut result);
+    result
+}
+
+pub fn recursive_permute(nums: &mut Vec<i32>, result: &mut Vec<Vec<i32>>, start: usize) {
+    if start == nums.len() {
+        result.push(nums.clone());
+        return;
+    }
+
+    for i in start..nums.len() {
+        (nums[start], nums[i]) = (nums[i], nums[start]);
+        recursive_permute(nums, result, start + 1);
+        (nums[start], nums[i]) = (nums[i], nums[start]);
+    }
+}
+
+pub fn permute_backtrack(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+    let mut result: Vec<Vec<i32>> = Vec::new();
+    recursive_permute(&mut nums, &mut result, 0);
+    result
+}

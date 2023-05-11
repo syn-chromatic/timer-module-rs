@@ -3,6 +3,7 @@ mod timer_module;
 
 use test::algorithm_test::{binary_digits, generate_binary_combinations};
 use test::algorithm_test::{binary_search_value, generate_array};
+
 use timer_module::profiler::TimeProfiler;
 use timer_module::timer::TimerModule;
 
@@ -15,6 +16,7 @@ fn main() {
     profile_function(&mut profiler);
     profile_function2(&mut profiler);
     profile_function3(&mut profiler);
+
     profiler.print_profiling_report();
 
     timer_example();

@@ -9,7 +9,7 @@ pub fn format_time(duration: Duration) -> String {
         let millis: f64 = nanos / 1e6;
         format!("{:.2}ms", millis)
     } else if nanos >= 1e3 {
-        let micros: f64 = nanos / 1e6;
+        let micros: f64 = nanos / 1e3;
         format!("{:.2}μs", micros)
     } else {
         format!("{:.2}ns", nanos)
