@@ -17,7 +17,7 @@ fn main() {
     profile_function2(&mut profiler);
     profile_function3(&mut profiler);
 
-    profiler.print_profiling_report();
+    profiler.print_report();
 
     timer_example();
 }

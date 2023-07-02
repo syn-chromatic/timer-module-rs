@@ -1,8 +1,8 @@
-use super::formatter::format_time;
-
 use core::fmt::Debug;
 use std::fmt::{Formatter, Result};
 use std::time::{Duration, Instant};
+
+use super::metrics::TimeFormatterNs;
 
 pub struct TimerModule {
     is_running: bool,
@@ -62,7 +62,8 @@ impl TimerModule {
 
     pub fn get_string(&mut self) -> String {
         self.update_duration();
-        let formatted_time: String = format_time(self.duration);
+        let formatter: TimeFormatterNs = TimeFormatterNs::new_from_duration(self.duration);
+        let formatted_time: String = formatter.auto_format();
         formatted_time
     }
 
@@ -90,7 +91,8 @@ fn get_duration(time_module: &TimerModule) -> Duration {
 impl Debug for TimerModule {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let duration: Duration = get_duration(self);
-        let formatted_time: String = format_time(duration);
+        let formatter: TimeFormatterNs = TimeFormatterNs::new_from_duration(duration);
+        let formatted_time: String = formatter.auto_format();
         write!(f, "{}", formatted_time)
     }
 }
